@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>TAIMAN.</title>
+    <title>ALIM.</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23fff' letter-spacing='1'>A</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -824,9 +824,9 @@
 <body>
 
     <header id="main-header">
-        <h1 onclick="resetToAllCollection()">TAIMAN.</h1>
+        <h1 onclick="resetToAllCollection()">ALIM.</h1>
         <nav>
-            <button onclick="window.open('ВСТАВЬ_ПУТЬ_КАТАЛОГ.html', '_blank')">Весь каталог</button>
+            <button onclick="window.location.href='ВСТАВЬ_ПУТЬ_КАТАЛОГ.html'">Весь каталог</button>
             <button id="user-display" onclick="handleUserClick()">Войти</button>
         </nav>
         <div class="nav-icons">
@@ -879,7 +879,7 @@
         <div class="promo-banner-content promo-short">
             <div class="promo-label">Эксклюзивно</div>
             <div class="promo-title">Лимитированные капсулы</div>
-            <button class="promo-btn" onclick="window.open('kapsuly.html', '_blank')">Узнать подробнее</button>
+            <button class="promo-btn" onclick="window.location.href='kapsuly.html'">Узнать подробнее</button>
         </div>
     </div>
 
@@ -897,7 +897,7 @@
         <div class="promo-banner-content">
             <div class="promo-label">Новинки сезона</div>
             <div class="promo-title">Осенняя коллекция<br>2026</div>
-            <button class="promo-btn" onclick="window.open('novosti.html', '_blank')">Смотреть новинки</button>
+            <button class="promo-btn" onclick="window.location.href='novosti.html'">Смотреть новинки</button>
         </div>
     </div>
 
@@ -909,8 +909,8 @@
     <div class="marquee-section">
         <div class="marquee-track">
             <!-- дублируем 2 раза для бесшовной петли -->
-            <span class="marquee-item">TAIMAN. <span class="marquee-dot">•</span> NEW COLLECTION <span class="marquee-dot">•</span> 2026 <span class="marquee-dot">•</span> FREE DELIVERY <span class="marquee-dot">•</span> КАЗАХСТАН <span class="marquee-dot">•</span> PREMIUM QUALITY <span class="marquee-dot">•</span> TAIMAN. STORE <span class="marquee-dot">•</span></span>
-            <span class="marquee-item">TAIMAN. <span class="marquee-dot">•</span> NEW COLLECTION <span class="marquee-dot">•</span> 2026 <span class="marquee-dot">•</span> FREE DELIVERY <span class="marquee-dot">•</span> КАЗАХСТАН <span class="marquee-dot">•</span> PREMIUM QUALITY <span class="marquee-dot">•</span> TAIMAN. STORE <span class="marquee-dot">•</span></span>
+            <span class="marquee-item">ALIM. <span class="marquee-dot">•</span> NEW COLLECTION <span class="marquee-dot">•</span> 2026 <span class="marquee-dot">•</span> FREE DELIVERY <span class="marquee-dot">•</span> КАЗАХСТАН <span class="marquee-dot">•</span> PREMIUM QUALITY <span class="marquee-dot">•</span> ALIM. STORE <span class="marquee-dot">•</span></span>
+            <span class="marquee-item">ALIM. <span class="marquee-dot">•</span> NEW COLLECTION <span class="marquee-dot">•</span> 2026 <span class="marquee-dot">•</span> FREE DELIVERY <span class="marquee-dot">•</span> КАЗАХСТАН <span class="marquee-dot">•</span> PREMIUM QUALITY <span class="marquee-dot">•</span> ALIM. STORE <span class="marquee-dot">•</span></span>
         </div>
     </div>
     <!-- ===== END MARQUEE ===== -->
@@ -922,7 +922,7 @@
             <div class="mini-banner-bg" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80')"></div>
             <div class="mini-banner-overlay"></div>
             <div class="mini-banner-content">
-                <div class="mini-banner-label">TAIMAN. Brand</div>
+                <div class="mini-banner-label">ALIM. Brand</div>
                 <div class="mini-banner-title">О нас</div>
                 <div class="mini-banner-btn">Узнать больше &rarr;</div>
             </div>
@@ -963,8 +963,8 @@
 
     <footer>
         <div class="footer-container">
-            <div class="footer-brand">TAIMAN.</div>
-            <div class="footer-rights">&copy; 2026 TAIMAN. Все права защищены. Официальный магазин бренда.</div>
+            <div class="footer-brand">ALIM.</div>
+            <div class="footer-rights">&copy; 2026 ALIM. Все права защищены. Официальный магазин бренда.</div>
             <div class="footer-links">
                 <a href="#" onclick="alert('Раздел в разработке')">Политика конфиденциальности</a>
                 <a href="#" onclick="alert('Раздел в разработке')">Условия использования</a>
@@ -1025,7 +1025,7 @@
     <div id="auth-modal" class="modal-overlay" onclick="closeAuthModal(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <button class="close-modal" onclick="closeModal('auth-modal')">&times;</button>
-            <div class="auth-brand">TAIMAN.</div>
+            <div class="auth-brand">ALIM.</div>
             <div class="auth-subtitle">Добро пожаловать</div>
 
             <div class="auth-tabs">
@@ -1699,7 +1699,7 @@
         document.getElementById('modal-title').textContent = selectedProduct.name;
         document.getElementById('modal-category').textContent = selectedProduct.categories ? selectedProduct.categories.name : 'Одежда';
         document.getElementById('modal-price').textContent = `${Number(selectedProduct.price).toLocaleString('ru-RU')} ₸`;
-        document.getElementById('modal-desc').textContent = selectedProduct.description || 'Описание коллекции бренда TAIMAN.';
+        document.getElementById('modal-desc').textContent = selectedProduct.description || 'Описание коллекции бренда ALIM.';
         const firstImg = skusForProduct.length > 0 && skusForProduct[0].image_url ? skusForProduct[0].image_url : 'https://via.placeholder.com/380x500?text=ALIM';
         document.getElementById('modal-img').src = firstImg;
 
