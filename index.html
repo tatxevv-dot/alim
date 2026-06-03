@@ -130,17 +130,18 @@
             align-items: center; justify-content: center;
             overflow: hidden; background-color: #111;
         }
-        /* Wrapper for Parallax strictly separated from Zoom animation */
+/* Wrapper for Parallax strictly separated from Zoom animation */
         .hero-parallax {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             will-change: transform;
+            transform-style: preserve-3d;
         }
         .hero-image {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 130%;
+            position: absolute; top: -10%; left: 0;
+            width: 100%; height: 120%;
             background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)),
                 url('https://cmmodels.com/wp-content/uploads/2020/05/polo-ralph-lauren-horse-designer-luxury.jpg');
-            background-size: cover; background-position: center top;
+            background-size: cover; background-position: center center;
             will-change: transform;
             animation: heroZoom 8s ease-out forwards;
         }
@@ -1195,10 +1196,9 @@
                     if (window.scrollY > 50) header.classList.add('scrolled');
                     else header.classList.remove('scrolled');
                     
-                    const parallax = document.getElementById('hero-parallax');
-                    if (parallax && window.scrollY <= window.innerHeight) {
-                        // Аппаратное ускорение через translate3d, убирает лаги свайпа
-                        parallax.style.transform = `translate3d(0, ${window.scrollY * 0.35}px, 0)`;
+        const parallaxImg = document.querySelector('#hero-parallax .hero-image');
+            if (parallaxImg && window.scrollY <= window.innerHeight) {
+                parallaxImg.style.transform = `translate3d(0, ${window.scrollY * 0.15}px, 0)`;
                     }
                     ticking = false;
                 });
