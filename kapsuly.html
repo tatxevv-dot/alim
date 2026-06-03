@@ -235,7 +235,39 @@
 
         @media (max-width: 768px) {
             .catalog { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
-            header { padding: 16px 20px; } header.scrolled { padding: 12px 20px; }
+            header {
+                padding: 14px 16px;
+                flex-wrap: nowrap;
+                overflow: visible;
+            }
+            header.scrolled { padding: 10px 16px; }
+            header h1 { font-size: 18px; letter-spacing: 2px; flex-shrink: 0; }
+            header nav { gap: 8px; flex-shrink: 0; }
+            header nav button, header #user-display {
+                font-size: 11px; letter-spacing: 0.8px;
+            }
+            .nav-icons {
+                gap: 12px;
+                flex-shrink: 0;
+            }
+            .search-container {
+                padding: 5px 10px;
+            }
+            .search-container input {
+                width: 0;
+                max-width: 0;
+                padding: 0;
+                opacity: 0;
+                pointer-events: none;
+                transition: width 0.3s ease, opacity 0.3s ease, max-width 0.3s ease;
+            }
+            .search-container.expanded input {
+                width: 100px;
+                max-width: 100px;
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .cart-icon-wrapper { display: block !important; }
             main { padding: 40px 16px; }
             .hero-title { font-size: 32px; letter-spacing: 5px; }
             .product-image-box { height: 200px; }
@@ -253,8 +285,6 @@
             .detail-info-side { max-height: none; padding: 30px 24px; }
             .profile-form-row { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
-            header nav { gap: 12px; }
-            .search-container input { width: 60px; }
         }
     </style>
 </head>
@@ -691,6 +721,22 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         loadProducts(); updateCartUI(); checkSession();
+
+        // Mobile: tap search icon to expand input
+        const searchContainer = document.querySelector('.search-container');
+        const searchIcon = searchContainer ? searchContainer.querySelector('i') : null;
+        if (searchIcon) {
+            searchIcon.style.cursor = 'pointer';
+            searchIcon.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    searchContainer.classList.toggle('expanded');
+                    if (searchContainer.classList.contains('expanded')) {
+                        searchContainer.querySelector('input').focus();
+                    }
+                }
+            });
+        }
+
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) { window.requestAnimationFrame(() => {
