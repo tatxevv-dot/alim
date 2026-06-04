@@ -88,20 +88,13 @@
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; background-color: #111;
         }
-/* Wrapper for Parallax strictly separated from Zoom animation */
-        .hero-parallax {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            will-change: transform;
-            transform-style: preserve-3d;
-        }
+        .hero-parallax { position: absolute; top: 0; left: 0; width: 100%; height: 100%; will-change: transform; }
         .hero-image {
-            position: absolute; top: -10%; left: 0;
-            width: 100%; height: 120%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 130%;
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)),
-                url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200&auto=format&fit=crop');
-            background-size: cover; background-position: center center;
-            will-change: transform;
-            animation: heroZoom 8s ease-out forwards;
+                url('https://assets.vogue.com/photos/696a9e5038a0953270e4a565/16:9/pass/00001-ralph-lauren-fall-2026-menswear-credit-gorunway.jpg');
+            background-size: cover; background-position: center;
+            will-change: transform; animation: heroZoom 8s ease-out forwards;
         }
         @keyframes heroZoom { from { transform: scale(1.08); } to { transform: scale(1.0); } }
         .hero-content { position: relative; z-index: 10; text-align: center; color: #fff; max-width: 800px; padding: 0 20px; }
@@ -310,39 +303,7 @@
         /* responsive */
         @media (max-width: 768px) {
             .catalog { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
-            header {
-                padding: 14px 16px;
-                flex-wrap: nowrap;
-                overflow: visible;
-            }
-            header.scrolled { padding: 10px 16px; }
-            header h1 { font-size: 18px; letter-spacing: 2px; flex-shrink: 0; }
-            header nav { gap: 8px; flex-shrink: 0; }
-            header nav button, header #user-display {
-                font-size: 11px; letter-spacing: 0.8px;
-            }
-            .nav-icons {
-                gap: 12px;
-                flex-shrink: 0;
-            }
-            .search-container {
-                padding: 5px 10px;
-            }
-            .search-container input {
-                width: 0;
-                max-width: 0;
-                padding: 0;
-                opacity: 0;
-                pointer-events: none;
-                transition: width 0.3s ease, opacity 0.3s ease, max-width 0.3s ease;
-            }
-            .search-container.expanded input {
-                width: 100px;
-                max-width: 100px;
-                opacity: 1;
-                pointer-events: auto;
-            }
-            .cart-icon-wrapper { display: block !important; }
+            header { padding: 16px 20px; } header.scrolled { padding: 12px 20px; }
             main { padding: 40px 16px; }
             .hero-title { font-size: 34px; letter-spacing: 3px; }
             .product-image-box { height: 200px; }
@@ -354,17 +315,49 @@
             footer { padding: 30px 20px; }
             .footer-container { flex-direction: column; text-align: center; gap: 15px; }
             .footer-links { justify-content: center; flex-wrap: wrap; gap: 15px; }
-            .product-detail-box { grid-template-columns: 1fr; border-radius: 12px; }
+            .product-detail-box {
+                grid-template-columns: 1fr; gap: 0;
+                border-radius: 20px 20px 0 0;
+                max-height: 92vh;
+                position: fixed; bottom: 0; left: 0; right: 0;
+                width: 100%; max-width: 100%;
+                transform: translateY(100%) !important;
+                transition: transform 0.4s cubic-bezier(0.16,1,0.3,1) !important;
+                overflow-y: auto; -webkit-overflow-scrolling: touch;
+            }
+            #product-modal.active .product-detail-box { transform: translateY(0) !important; }
             .detail-img-side { height: 320px !important; }
             .detail-info-side { max-height: none; padding: 30px 24px; }
             .profile-form-row { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
-        }
-            .profile-form-row { grid-template-columns: 1fr; }
-            .form-row { grid-template-columns: 1fr; }
             header nav { gap: 12px; }
             .search-container input { width: 60px; }
-        
+        }
+
+        /* ── On mobile, product modal is bottom sheet */
+        @media (max-width: 768px) {
+            #product-modal { align-items: flex-end; justify-content: stretch; }
+        }
+        /* ── IMAGE SLIDER ── */
+        .img-slider-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; touch-action: pan-y pinch-zoom; }
+        .img-slider-track { display: flex; height: 100%; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); will-change: transform; }
+        .img-slider-track img { min-width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; pointer-events: none; user-select: none; }
+        .img-slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
+        .img-slider-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: all 0.2s; cursor: pointer; }
+        .img-slider-dot.active { background: #fff; width: 18px; border-radius: 3px; }
+        .img-slider-arrows { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 10px; z-index: 5; pointer-events: none; }
+        .img-slider-btn { pointer-events: auto; background: rgba(255,255,255,0.85); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; transition: background 0.2s; backdrop-filter: blur(4px); }
+        .img-slider-btn:hover { background: #fff; }
+        @media (min-width: 769px) { .img-slider-dots { display: none; } }
+        /* ── COLOR SWIPER ── */
+        .color-swiper-wrap { position: relative; overflow: hidden; }
+        .color-swiper-track { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; scroll-behavior: smooth; }
+        .color-swiper-track::-webkit-scrollbar { display: none; }
+        .color-swiper-track .option-selector { scroll-snap-align: start; flex-shrink: 0; }
+        /* ── Pull handle ── */
+        .modal-pull-handle { display: none; }
+        @media (max-width: 768px) { .modal-pull-handle { display: block; width: 36px; height: 4px; background: rgba(0,0,0,0.15); border-radius: 2px; margin: 12px auto 4px; } }
+
     </style>
 </head>
 <body>
@@ -470,23 +463,27 @@
     </div>
 
     <!-- PRODUCT MODAL -->
-    <div id="product-modal" class="modal-overlay" onclick="closeProductModal(event)">
+        <div id="product-modal" class="modal-overlay" onclick="closeProductModal(event)">
         <div class="modal-box product-detail-box" onclick="event.stopPropagation()">
+            <div class="modal-pull-handle"></div>
             <button class="close-modal" onclick="closeModal('product-modal')">&times;</button>
-            <div class="detail-img-side"><img id="modal-img" src="" alt=""></div>
+            <div class="detail-img-side">
+                <div class="img-slider-wrap" id="modal-slider-wrap">
+                    <div class="img-slider-track" id="modal-slider-track"><img id="modal-img" src="" alt=""></div>
+                    <div class="img-slider-arrows">
+                        <button class="img-slider-btn" onclick="sliderMove(-1)">&#8249;</button>
+                        <button class="img-slider-btn" onclick="sliderMove(1)">&#8250;</button>
+                    </div>
+                    <div class="img-slider-dots" id="slider-dots"></div>
+                </div>
+            </div>
             <div class="detail-info-side">
                 <div id="modal-category" class="product-category"></div>
                 <h2 id="modal-title" class="detail-title"></h2>
                 <div id="modal-price" class="detail-price"></div>
                 <p id="modal-desc" class="detail-desc"></p>
-                <div class="option-section">
-                    <div class="option-label">Размер</div>
-                    <div class="options-wrapper" id="sizes-container"></div>
-                </div>
-                <div class="option-section">
-                    <div class="option-label">Цвет</div>
-                    <div class="options-wrapper" id="colors-container"></div>
-                </div>
+                <div class="option-section"><div class="option-label">Размер</div><div class="options-wrapper" id="sizes-container"></div></div>
+                <div class="option-section"><div class="option-label">Цвет</div><div class="color-swiper-wrap"><div class="color-swiper-track options-wrapper" id="colors-container"></div></div></div>
                 <div class="stock-indicator" id="modal-stock"></div>
                 <button class="submit-btn" id="add-to-cart-btn" onclick="handleAddToCartClick()">Добавить в корзину</button>
             </div>
@@ -705,8 +702,9 @@
         document.getElementById('modal-category').textContent = selectedProduct.categories ? selectedProduct.categories.name : 'Одежда';
         document.getElementById('modal-price').textContent = `${Number(selectedProduct.price).toLocaleString('ru-RU')} ₸`;
         document.getElementById('modal-desc').textContent = selectedProduct.description || 'Описание коллекции бренда TAIMAN.';
-        const firstImg = skusForProduct.length > 0 && skusForProduct[0].image_url ? skusForProduct[0].image_url : 'https://via.placeholder.com/380x500?text=ALIM';
-        document.getElementById('modal-img').src = firstImg;
+        const allImgs = [...new Set(skusForProduct.map(s => s.image_url).filter(Boolean))];
+        if (allImgs.length === 0) allImgs.push('https://via.placeholder.com/380x500?text=TAIMAN');
+        buildSlider(allImgs);
         const sizes = [...new Set(skusForProduct.map(s => s.size))].filter(Boolean);
         const colors = [...new Set(skusForProduct.map(s => s.color))].filter(Boolean);
         const sizesContainer = document.getElementById('sizes-container');
@@ -714,8 +712,23 @@
         sizesContainer.innerHTML = ''; colorsContainer.innerHTML = '';
         selectedSize = null; selectedColor = null;
         updateStockIndicator(skusForProduct);
-        sizes.forEach(size => { const btn = document.createElement('button'); btn.className = 'option-selector'; btn.textContent = size; btn.onclick = () => { sizesContainer.querySelectorAll('.option-selector').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedSize = size; checkSelectedSku(skusForProduct); }; sizesContainer.appendChild(btn); });
-        colors.forEach(color => { const btn = document.createElement('button'); btn.className = 'option-selector'; btn.textContent = color; btn.onclick = () => { colorsContainer.querySelectorAll('.option-selector').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedColor = color; checkSelectedSku(skusForProduct); }; colorsContainer.appendChild(btn); });
+        sizes.forEach(size => {
+            const btn = document.createElement('button'); btn.className = 'option-selector'; btn.textContent = size;
+            btn.onclick = () => { sizesContainer.querySelectorAll('.option-selector').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedSize = size; checkSelectedSku(skusForProduct); };
+            sizesContainer.appendChild(btn);
+        });
+        colors.forEach(color => {
+            const btn = document.createElement('button'); btn.className = 'option-selector'; btn.textContent = color;
+            btn.onclick = () => {
+                colorsContainer.querySelectorAll('.option-selector').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected'); selectedColor = color;
+                checkSelectedSku(skusForProduct);
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                const matchedSku = skusForProduct.find(s => s.color === color);
+                if (matchedSku && matchedSku.image_url) { const imgIdx = allImgs.indexOf(matchedSku.image_url); if (imgIdx !== -1) goToSlide(imgIdx); }
+            };
+            colorsContainer.appendChild(btn);
+        });
         openModal('product-modal');
     }
 
@@ -725,10 +738,18 @@
         const stockEl = document.getElementById('modal-stock');
         const addBtn = document.getElementById('add-to-cart-btn');
         if (matched) {
-            if (matched.image_url) document.getElementById('modal-img').src = matched.image_url;
-            if (matched.stock > 0) { stockEl.innerHTML = `<span style="color:#34c759;"><i class="fa-solid fa-circle-check"></i> В наличии: ${matched.stock} шт.</span>`; addBtn.disabled = false; addBtn.style.background = '#000'; addBtn.textContent = 'Добавить в корзину'; }
-            else { stockEl.innerHTML = '<span style="color:#ff3b30;"><i class="fa-solid fa-circle-xmark"></i> Нет в наличии</span>'; addBtn.disabled = true; addBtn.style.background = '#ccc'; }
-        } else { stockEl.innerHTML = '<span style="color:#ff3b30;">Такое сочетание недоступно</span>'; addBtn.disabled = true; addBtn.style.background = '#ccc'; }
+            if (matched.image_url) { const imgIdx = sliderImages.indexOf(matched.image_url); if (imgIdx !== -1) goToSlide(imgIdx); }
+            if (matched.stock > 0) {
+                stockEl.innerHTML = `<span style="color:#34c759;"><i class="fa-solid fa-circle-check"></i> В наличии: ${matched.stock} шт.</span>`;
+                addBtn.disabled = false; addBtn.style.background = '#000'; addBtn.textContent = 'Добавить в корзину';
+            } else {
+                stockEl.innerHTML = '<span style="color:#ff3b30;"><i class="fa-solid fa-circle-xmark"></i> Нет в наличии</span>';
+                addBtn.disabled = true; addBtn.style.background = '#ccc';
+            }
+        } else {
+            stockEl.innerHTML = '<span style="color:#ff3b30;">Такое сочетание недоступно</span>';
+            addBtn.disabled = true; addBtn.style.background = '#ccc';
+        }
     }
 
     function updateStockIndicator(skus) {
@@ -850,21 +871,6 @@
         updateCartUI();
         checkSession();
 
-        // Mobile: tap search icon to expand input
-        const searchContainer = document.querySelector('.search-container');
-        const searchIcon = searchContainer ? searchContainer.querySelector('i') : null;
-        if (searchIcon) {
-            searchIcon.style.cursor = 'pointer';
-            searchIcon.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    searchContainer.classList.toggle('expanded');
-                    if (searchContainer.classList.contains('expanded')) {
-                        searchContainer.querySelector('input').focus();
-                    }
-                }
-            });
-        }
-
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) {
@@ -880,6 +886,44 @@
             }
         }, { passive: true });
     });
+
+    /* ── IMAGE SLIDER JS ── */
+    let sliderImages = [];
+    let sliderIndex = 0;
+    function buildSlider(images) {
+        sliderImages = images; sliderIndex = 0;
+        const track = document.getElementById('modal-slider-track');
+        const dots = document.getElementById('slider-dots');
+        track.innerHTML = ''; dots.innerHTML = '';
+        images.forEach((src, i) => {
+            const img = document.createElement('img'); img.src = src; img.alt = ''; track.appendChild(img);
+            const dot = document.createElement('div'); dot.className = 'img-slider-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i); dots.appendChild(dot);
+        });
+        const arrows = document.querySelector('.img-slider-arrows');
+        if (arrows) arrows.style.display = images.length > 1 ? 'flex' : 'none';
+        dots.style.display = images.length > 1 ? 'flex' : 'none';
+        initSliderSwipe(); goToSlide(0);
+    }
+    function goToSlide(idx) {
+        sliderIndex = Math.max(0, Math.min(idx, sliderImages.length - 1));
+        const track = document.getElementById('modal-slider-track');
+        if (track) track.style.transform = `translateX(-${sliderIndex * 100}%)`;
+        document.querySelectorAll('.img-slider-dot').forEach((d, i) => d.classList.toggle('active', i === sliderIndex));
+    }
+    function sliderMove(dir) { goToSlide(sliderIndex + dir); }
+    function initSliderSwipe() {
+        const wrap = document.getElementById('modal-slider-wrap');
+        if (!wrap || wrap._swipeInit) return; wrap._swipeInit = true;
+        let startX = 0, startY = 0, isDragging = false;
+        wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true; }, { passive: true });
+        wrap.addEventListener('touchend', e => {
+            if (!isDragging) return;
+            const dx = e.changedTouches[0].clientX - startX; const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) sliderMove(dx < 0 ? 1 : -1);
+            isDragging = false;
+        }, { passive: true });
+    }
 </script>
 </body>
 </html>
