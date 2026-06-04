@@ -976,6 +976,111 @@
                 border-radius: 50% !important;
             }
         }
+
+        /* ══════════════════════════════════════════
+           LIGHTBOX (fullscreen image zoom)
+           ══════════════════════════════════════════ */
+        #lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.96);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+        #lightbox-overlay.active { display: flex; }
+        #lightbox-track-wrap {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #lightbox-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+            will-change: transform;
+        }
+        #lightbox-track img {
+            min-width: 100vw;
+            width: 100vw;
+            height: 100%;
+            object-fit: contain;
+            flex-shrink: 0;
+            user-select: none;
+            pointer-events: none;
+        }
+        #lightbox-close {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 10000;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s;
+        }
+        #lightbox-close:hover { background: rgba(255,255,255,0.25); }
+        #lightbox-dots {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10000;
+        }
+        .lb-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .lb-dot.active { background: #fff; width: 18px; border-radius: 3px; }
+        #lightbox-arrows {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 12px;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        .lb-arrow {
+            pointer-events: auto;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            border-radius: 50%;
+            width: 38px; height: 38px;
+            font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+        }
+        .lb-arrow:hover { background: rgba(255,255,255,0.25); }
+        @media (max-width: 768px) {
+            #lightbox-arrows { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -1887,6 +1992,15 @@
         // Touch swipe
         initSliderSwipe();
         goToSlide(0);
+
+        // click image to open lightbox
+        const sliderTrack = document.getElementById('modal-slider-track');
+        if (sliderTrack && !sliderTrack._lbClickInit) {
+            sliderTrack._lbClickInit = true;
+            sliderTrack.addEventListener('click', () => {
+                if (sliderImages && sliderImages.length) openLightbox(sliderImages, sliderIndex);
+            });
+        }
     }
 
     function goToSlide(idx) {
@@ -2077,5 +2191,18 @@
         setTimeout(() => toggleCartSidebar(true), 350);
     }
 </script>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox-overlay" onclick="lbBgClose(event)">
+        <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <div id="lightbox-track-wrap">
+            <div id="lightbox-track"></div>
+        </div>
+        <div id="lightbox-arrows">
+            <button class="lb-arrow" onclick="lbMove(-1)">&#8249;</button>
+            <button class="lb-arrow" onclick="lbMove(1)">&#8250;</button>
+        </div>
+        <div id="lightbox-dots"></div>
+    </div>
 </body>
 </html>
