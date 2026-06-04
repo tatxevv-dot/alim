@@ -306,7 +306,7 @@
         /* ── IMAGE SLIDER ── */
         .img-slider-wrap { position: relative; width: 100%; height: 100%; overflow: hidden; touch-action: pan-y pinch-zoom; }
         .img-slider-track { display: flex; height: 100%; transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); will-change: transform; }
-        .img-slider-track img { min-width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; pointer-events: auto; user-select: none; cursor: zoom-in; }
+        .img-slider-track img { min-width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; pointer-events: none; user-select: none; }
         .img-slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
         .img-slider-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: all 0.2s; cursor: pointer; }
         .img-slider-dot.active { background: #fff; width: 18px; border-radius: 3px; }
@@ -406,111 +406,6 @@
                 font-size: 18px !important;
                 border-radius: 50% !important;
             }
-        }
-
-        /* ══════════════════════════════════════════
-           LIGHTBOX (fullscreen image zoom)
-           ══════════════════════════════════════════ */
-        #lightbox-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0,0,0,0.96);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            touch-action: none;
-        }
-        #lightbox-overlay.active { display: flex; }
-        #lightbox-track-wrap {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #lightbox-track {
-            display: flex;
-            height: 100%;
-            transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
-            will-change: transform;
-        }
-        #lightbox-track img {
-            min-width: 100vw;
-            width: 100vw;
-            height: 100%;
-            object-fit: contain;
-            flex-shrink: 0;
-            user-select: none;
-            pointer-events: none;
-        }
-        #lightbox-close {
-            position: fixed;
-            top: 14px;
-            right: 14px;
-            z-index: 10000;
-            background: rgba(255,255,255,0.12);
-            border: none;
-            color: #fff;
-            font-size: 22px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(6px);
-            transition: background 0.2s;
-        }
-        #lightbox-close:hover { background: rgba(255,255,255,0.25); }
-        #lightbox-dots {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
-            z-index: 10000;
-        }
-        .lb-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.35);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .lb-dot.active { background: #fff; width: 18px; border-radius: 3px; }
-        #lightbox-arrows {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 12px;
-            pointer-events: none;
-            z-index: 10000;
-        }
-        .lb-arrow {
-            pointer-events: auto;
-            background: rgba(255,255,255,0.12);
-            border: none;
-            color: #fff;
-            border-radius: 50%;
-            width: 38px; height: 38px;
-            font-size: 20px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            transition: background 0.2s;
-        }
-        .lb-arrow:hover { background: rgba(255,255,255,0.25); }
-        @media (max-width: 768px) {
-            #lightbox-arrows { display: none; }
         }
     </style>
 </head>
@@ -814,7 +709,7 @@
         catalogContainer.innerHTML = '<div style="color: var(--muted-color);">Обновление витрины...</div>';
         try {
             const { data: products, error: prodError } = await supabaseClient.from('products').select('*, categories(name)').eq('is_visible', true);
-            const { data: skus, error: skuError } = await supabaseClient.from('product_skus').select('*');
+            const { data: skus, error: skuError } = await supabaseClient.from('product_skus').select('*, product_images(url, sort_order)');
             if (prodError || skuError) throw prodError || skuError;
             globalProducts = products || []; globalSkus = skus || [];
             // Фильтруем и сохраняем порядок из PAGE_PRODUCT_IDS
@@ -848,7 +743,16 @@
         document.getElementById('modal-category').textContent = selectedProduct.categories ? selectedProduct.categories.name : 'Одежда';
         document.getElementById('modal-price').textContent = `${Number(selectedProduct.price).toLocaleString('ru-RU')} ₸`;
         document.getElementById('modal-desc').textContent = selectedProduct.description || 'Описание коллекции бренда TAIMAN.';
-        const allImgs = [...new Set(skusForProduct.map(s => s.image_url).filter(Boolean))];
+        const allImgs = [];
+        skusForProduct.forEach(s => {
+            if (s.product_images && s.product_images.length > 0) {
+                const sorted = [...s.product_images].sort((a, b) => a.sort_order - b.sort_order);
+                sorted.forEach(img => { if (!allImgs.includes(img.url)) allImgs.push(img.url); });
+            }
+        });
+        if (allImgs.length === 0) {
+            skusForProduct.forEach(s => { if (s.image_url && !allImgs.includes(s.image_url)) allImgs.push(s.image_url); });
+        }
         if (allImgs.length === 0) allImgs.push('https://via.placeholder.com/380x500?text=TAIMAN');
         buildSlider(allImgs);
         const sizes = [...new Set(skusForProduct.map(s => s.size))].filter(Boolean);
@@ -1036,14 +940,6 @@
         if (arrows) arrows.style.display = images.length > 1 ? 'flex' : 'none';
         dots.style.display = images.length > 1 ? 'flex' : 'none';
         initSliderSwipe(); goToSlide(0);
-        // click image to open lightbox
-        const sliderTrack = document.getElementById('modal-slider-track');
-        if (sliderTrack && !sliderTrack._lbClickInit) {
-            sliderTrack._lbClickInit = true;
-            sliderTrack.addEventListener('click', () => {
-                if (sliderImages && sliderImages.length) openLightbox(sliderImages, sliderIndex);
-            });
-        }
     }
     function goToSlide(idx) {
         sliderIndex = Math.max(0, Math.min(idx, sliderImages.length - 1));
@@ -1065,18 +961,5 @@
         }, { passive: true });
     }
 </script>
-
-    <!-- LIGHTBOX -->
-    <div id="lightbox-overlay" onclick="lbBgClose(event)">
-        <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
-        <div id="lightbox-track-wrap">
-            <div id="lightbox-track"></div>
-        </div>
-        <div id="lightbox-arrows">
-            <button class="lb-arrow" onclick="lbMove(-1)">&#8249;</button>
-            <button class="lb-arrow" onclick="lbMove(1)">&#8250;</button>
-        </div>
-        <div id="lightbox-dots"></div>
-    </div>
 </body>
 </html>
