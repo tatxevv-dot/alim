@@ -91,26 +91,6 @@
             transition: color 0.3s ease;
         }
 
-        /* ───── SEARCH BAR ───── */
-        .search-container {
-            display: flex; align-items: center;
-            background: rgba(255,255,255,0.15);
-            border-radius: 20px; padding: 6px 14px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        header.scrolled .search-container { background: rgba(0,0,0,0.05); }
-        .search-container input {
-            border: none; background: transparent; outline: none;
-            font-family: var(--font-body); font-size: 13px; width: 130px;
-            color: var(--header-text); transition: color 0.3s ease, width 0.3s ease;
-        }
-        header.scrolled .search-container input { color: #000; }
-        .search-container input::placeholder { color: rgba(255,255,255,0.7); }
-        header.scrolled .search-container input::placeholder { color: rgba(0,0,0,0.4); }
-        .search-container i { color: var(--header-text); font-size: 13px; transition: color 0.3s ease;}
-        header.scrolled .search-container i { color: #000; }
-
         .cart-icon-wrapper {
             position: relative; cursor: pointer; display: none;
         }
@@ -396,6 +376,14 @@
             z-index: 1000;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* On mobile, product modal is bottom sheet */
+        @media (max-width: 768px) {
+            #product-modal {
+                align-items: flex-end;
+                justify-content: stretch;
+            }
+        }
 
         .modal-box {
             background: #fff; padding: 40px; width: 100%;
@@ -757,17 +745,20 @@
 
         /* ───── RESPONSIVE ───── */
         @media (max-width: 768px) {
-            .catalog { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+            .catalog { grid-template-columns: repeat(2, 1fr); gap: 10px 8px; }
             header { padding: 16px 20px; }
             header.scrolled { padding: 12px 20px; }
-            main { padding: 40px 16px; }
+            main { padding: 30px 12px; }
             .hero-title { font-size: 34px; letter-spacing: 3px; }
-            .product-image-box { height: 200px; }
-            .product-card { max-height: none; }
-            .product-title { font-size: 12px; }
-            .product-price { font-size: 12px; }
-            .product-category { font-size: 10px; }
-            .product-info { padding: 10px 0 6px 0; gap: 2px; }
+
+            /* ── Компактные карточки ── */
+            .product-image-box { height: 160px; }
+            .product-card { max-height: none; border-radius: 8px; overflow: hidden; }
+            .product-title { font-size: 11px; font-weight: 500; }
+            .product-price { font-size: 11px; }
+            .product-category { font-size: 9px; }
+            .product-info { padding: 7px 0 5px 0; gap: 2px; }
+
             header nav { gap: 12px; }
             header nav button, header nav #user-display { font-size: 11px; letter-spacing: 0.5px; }
             .nav-icons { gap: 10px; }
@@ -776,14 +767,32 @@
             .categories-nav {
                 justify-content: flex-start; gap: 24px;
                 overflow-x: auto; white-space: nowrap;
-                padding-left: 16px; padding-right: 16px;
-                margin-left: -16px; margin-right: -16px;
+                padding-left: 12px; padding-right: 12px;
+                margin-left: -12px; margin-right: -12px;
                 scrollbar-width: none;
             }
             .categories-nav::-webkit-scrollbar { display: none; }
-            .product-detail-box { grid-template-columns: 1fr; gap: 0; border-radius: 12px; }
-            .detail-img-side { height: 320px !important; }
-            .detail-info-side { max-height: none; padding: 30px 24px; }
+
+            /* ── Product modal: bottom sheet на мобилке ── */
+            #product-modal .modal-box { padding: 0; }
+            .product-detail-box {
+                grid-template-columns: 1fr; gap: 0;
+                border-radius: 20px 20px 0 0;
+                max-height: 92vh;
+                position: fixed; bottom: 0; left: 0; right: 0;
+                width: 100%; max-width: 100%;
+                transform: translateY(100%) !important;
+                transition: transform 0.4s cubic-bezier(0.16,1,0.3,1) !important;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #product-modal.active .product-detail-box { transform: translateY(0) !important; }
+            .detail-img-side { height: 260px !important; flex-shrink: 0; position: relative; }
+            .detail-info-side { max-height: none; padding: 20px 20px 30px; overflow: visible; }
+            .detail-title { font-size: 18px; }
+            .detail-price { font-size: 15px; margin-bottom: 14px; }
+            .detail-desc { font-size: 12px; margin-bottom: 18px; }
+
             footer { padding: 30px 20px; }
             .footer-container { flex-direction: column; text-align: center; gap: 15px; }
             .footer-links { justify-content: center; flex-wrap: wrap; gap: 15px; }
@@ -795,6 +804,76 @@
         @media (max-width: 400px) {
             .search-container input { width: 45px; }
             header h1 { font-size: 20px; }
+            .product-image-box { height: 140px; }
+        }
+
+        /* ── IMAGE SLIDER ── */
+        .img-slider-wrap {
+            position: relative; width: 100%; height: 100%;
+            overflow: hidden; touch-action: pan-y pinch-zoom;
+        }
+        .img-slider-track {
+            display: flex; height: 100%;
+            transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+            will-change: transform;
+        }
+        .img-slider-track img {
+            min-width: 100%; height: 100%; object-fit: cover; flex-shrink: 0;
+            pointer-events: none; user-select: none;
+        }
+        .img-slider-dots {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 5px; z-index: 5;
+        }
+        .img-slider-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.5); transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .img-slider-dot.active { background: #fff; width: 18px; border-radius: 3px; }
+        .img-slider-arrows {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 100%; display: flex; justify-content: space-between;
+            padding: 0 10px; z-index: 5; pointer-events: none;
+        }
+        .img-slider-btn {
+            pointer-events: auto; background: rgba(255,255,255,0.85);
+            border: none; border-radius: 50%; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 13px; transition: background 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .img-slider-btn:hover { background: #fff; }
+        @media (min-width: 769px) {
+            .img-slider-dots { display: none; }
+        }
+
+        /* ── COLOR SWIPER ── */
+        .color-swiper-wrap {
+            position: relative; overflow: hidden;
+        }
+        .color-swiper-track {
+            display: flex; gap: 8px; overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; padding-bottom: 2px;
+            scroll-behavior: smooth;
+        }
+        .color-swiper-track::-webkit-scrollbar { display: none; }
+        .color-swiper-track .option-selector {
+            scroll-snap-align: start; flex-shrink: 0;
+        }
+
+        /* ── Bottom sheet pull handle ── */
+        .modal-pull-handle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .modal-pull-handle {
+                display: block; width: 36px; height: 4px;
+                background: rgba(0,0,0,0.15); border-radius: 2px;
+                margin: 12px auto 4px; flex-shrink: 0;
+            }
         }
 
         /* ===== MARQUEE ===== */
@@ -827,15 +906,10 @@
     <header id="main-header">
         <h1 onclick="resetToAllCollection()">TAIMAN.</h1>
         <nav>
-            <button onclick="window.location.href='ВСТАВЬ_ПУТЬ_КАТАЛОГ.html'">Весь каталог</button>
+            <button onclick="window.location.href='catalog.html'">Весь каталог</button>
             <button id="user-display" onclick="handleUserClick()">Войти</button>
         </nav>
         <div class="nav-icons">
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Поиск..." oninput="handleSearch()">
-                <i class="fa-solid fa-magnifying-glass" onclick="document.getElementById('searchInput').focus()"></i>
-            </div>
-
             <div class="cart-icon-wrapper" onclick="toggleCartSidebar(true)">
                 <i class="fa-solid fa-bag-shopping"></i>
                 <div class="cart-badge" id="cart-counter">0</div>
@@ -1000,9 +1074,19 @@
 
     <div id="product-modal" class="modal-overlay" onclick="closeProductModal(event)">
         <div class="modal-box product-detail-box" onclick="event.stopPropagation()">
+            <div class="modal-pull-handle"></div>
             <button class="close-modal" onclick="closeModal('product-modal')">&times;</button>
             <div class="detail-img-side">
-                <img id="modal-img" src="" alt="">
+                <div class="img-slider-wrap" id="modal-slider-wrap">
+                    <div class="img-slider-track" id="modal-slider-track">
+                        <img id="modal-img" src="" alt="">
+                    </div>
+                    <div class="img-slider-arrows">
+                        <button class="img-slider-btn" id="slider-prev" onclick="sliderMove(-1)">&#8249;</button>
+                        <button class="img-slider-btn" id="slider-next" onclick="sliderMove(1)">&#8250;</button>
+                    </div>
+                    <div class="img-slider-dots" id="slider-dots"></div>
+                </div>
             </div>
             <div class="detail-info-side">
                 <div id="modal-category" class="product-category"></div>
@@ -1015,7 +1099,9 @@
                 </div>
                 <div class="option-section">
                     <div class="option-label">Цвет</div>
-                    <div class="options-wrapper" id="colors-container"></div>
+                    <div class="color-swiper-wrap">
+                        <div class="color-swiper-track options-wrapper" id="colors-container"></div>
+                    </div>
                 </div>
                 <div id="modal-stock" class="stock-indicator"></div>
                 <button class="submit-btn" id="add-to-cart-btn" onclick="handleAddToCartClick()">Добавить в корзину</button>
@@ -1690,6 +1776,74 @@
         document.getElementById('categories-container').style.pointerEvents = 'auto';
     }
 
+    /* ─── IMAGE SLIDER ─── */
+    let sliderImages = [];
+    let sliderIndex = 0;
+
+    function buildSlider(images) {
+        sliderImages = images;
+        sliderIndex = 0;
+        const track = document.getElementById('modal-slider-track');
+        const dots = document.getElementById('slider-dots');
+        track.innerHTML = '';
+        dots.innerHTML = '';
+
+        images.forEach((src, i) => {
+            const img = document.createElement('img');
+            img.src = src; img.alt = '';
+            track.appendChild(img);
+
+            const dot = document.createElement('div');
+            dot.className = 'img-slider-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dots.appendChild(dot);
+        });
+
+        // Update legacy modal-img ref to first image
+        document.getElementById('modal-img') && (document.getElementById('modal-img').src = images[0] || '');
+
+        // Show/hide arrows
+        const arrowsEl = document.querySelector('.img-slider-arrows');
+        if (arrowsEl) arrowsEl.style.display = images.length > 1 ? 'flex' : 'none';
+        dots.style.display = images.length > 1 ? 'flex' : 'none';
+
+        // Touch swipe
+        initSliderSwipe();
+        goToSlide(0);
+    }
+
+    function goToSlide(idx) {
+        sliderIndex = Math.max(0, Math.min(idx, sliderImages.length - 1));
+        const track = document.getElementById('modal-slider-track');
+        track.style.transform = `translateX(-${sliderIndex * 100}%)`;
+        document.querySelectorAll('.img-slider-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === sliderIndex);
+        });
+    }
+
+    function sliderMove(dir) {
+        goToSlide(sliderIndex + dir);
+    }
+
+    function initSliderSwipe() {
+        const wrap = document.getElementById('modal-slider-wrap');
+        if (!wrap || wrap._swipeInit) return;
+        wrap._swipeInit = true;
+        let startX = 0, startY = 0, isDragging = false;
+        wrap.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = true;
+        }, { passive: true });
+        wrap.addEventListener('touchend', e => {
+            if (!isDragging) return;
+            const dx = e.changedTouches[0].clientX - startX;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) sliderMove(dx < 0 ? 1 : -1);
+            isDragging = false;
+        }, { passive: true });
+    }
+
     /* ─── PRODUCT DETAIL ─── */
     function openProductDetails(productId) {
         selectedProduct = globalProducts.find(p => p.id === productId);
@@ -1700,8 +1854,11 @@
         document.getElementById('modal-category').textContent = selectedProduct.categories ? selectedProduct.categories.name : 'Одежда';
         document.getElementById('modal-price').textContent = `${Number(selectedProduct.price).toLocaleString('ru-RU')} ₸`;
         document.getElementById('modal-desc').textContent = selectedProduct.description || 'Описание коллекции бренда TAIMAN.';
-        const firstImg = skusForProduct.length > 0 && skusForProduct[0].image_url ? skusForProduct[0].image_url : 'https://via.placeholder.com/380x500?text=ALIM';
-        document.getElementById('modal-img').src = firstImg;
+
+        // Build image list from all SKUs (unique images)
+        const allImgs = [...new Set(skusForProduct.map(s => s.image_url).filter(Boolean))];
+        if (allImgs.length === 0) allImgs.push('https://via.placeholder.com/380x500?text=ALIM');
+        buildSlider(allImgs);
 
         const sizes = [...new Set(skusForProduct.map(s => s.size))].filter(Boolean);
         const colors = [...new Set(skusForProduct.map(s => s.color))].filter(Boolean);
@@ -1726,7 +1883,7 @@
             sizesContainer.appendChild(btn);
         });
 
-        colors.forEach(color => {
+        colors.forEach((color, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-selector';
             btn.textContent = color;
@@ -1735,6 +1892,16 @@
                 btn.classList.add('selected');
                 selectedColor = color;
                 checkSelectedSku(skusForProduct);
+
+                // Auto-scroll color into view
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                // Switch slider to matching image for this color
+                const matchedSku = skusForProduct.find(s => s.color === color);
+                if (matchedSku && matchedSku.image_url) {
+                    const imgIdx = allImgs.indexOf(matchedSku.image_url);
+                    if (imgIdx !== -1) goToSlide(imgIdx);
+                }
             };
             colorsContainer.appendChild(btn);
         });
@@ -1748,7 +1915,10 @@
         const stockEl = document.getElementById('modal-stock');
         const addBtn = document.getElementById('add-to-cart-btn');
         if (matched) {
-            if (matched.image_url) document.getElementById('modal-img').src = matched.image_url;
+            if (matched.image_url) {
+                const imgIdx = sliderImages.indexOf(matched.image_url);
+                if (imgIdx !== -1) goToSlide(imgIdx);
+            }
             if (matched.stock > 0) {
                 stockEl.innerHTML = `<span style="color:#34c759;"><i class="fa-solid fa-circle-check"></i> В наличии: ${matched.stock} шт.</span>`;
                 addBtn.disabled = false;
