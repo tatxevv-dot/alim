@@ -362,7 +362,7 @@
         }
         .footer-links a:hover { color: var(--text-color); }
 
-        body.modal-open { overflow: hidden; }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
         /* ───── MODAL OVERLAY BASE ───── */
         .modal-overlay {
@@ -378,11 +378,7 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
         /* On mobile, product modal is bottom sheet */
-        @media (max-width: 768px) {
-            #product-modal { align-items: stretch; justify-content: stretch; padding: 0; }
-            #product-modal .modal-box { max-width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateY(100%) scale(1); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1) !important; }
-            #product-modal.active .modal-box { transform: translateY(0) scale(1) !important; }
-        }
+        
 
         .modal-box {
             background: #fff; padding: 40px; width: 100%;
@@ -408,9 +404,7 @@
             z-index: 20; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         .close-modal:hover { background: #000; color: #fff; opacity: 1; }
-        @media (max-width: 768px) {
-            #product-modal .close-modal { position: fixed; top: 14px; right: 14px; z-index: 1400; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.18); width: 38px; height: 38px; font-size: 18px; }
-        }
+        
 
         /* ───── AUTH MODAL ───── */
         #auth-modal .modal-box {
@@ -897,6 +891,90 @@
         @keyframes marquee {
             from { transform: translateX(0); }
             to   { transform: translateX(-50%); }
+        }
+
+        /* ══════════════════════════════════════════
+           MOBILE PRODUCT MODAL — full rewrite
+           ══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+
+            /* Overlay: full screen, no flex centering */
+            #product-modal {
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 0;
+            }
+
+            /* modal-box = the card container, fills full screen */
+            #product-modal .modal-box {
+                width: 100%;
+                max-width: 100%;
+                /* Use dvh so browser chrome doesn't cause overflow */
+                height: 100dvh;
+                max-height: 100dvh;
+                border-radius: 0;
+                padding: 0;
+                /* NO overflow here — inner parts handle their own scroll */
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                transform: translateY(100%) !important;
+                transition: transform 0.4s cubic-bezier(0.16,1,0.3,1) !important;
+            }
+            #product-modal.active .modal-box {
+                transform: translateY(0) !important;
+            }
+
+            /* product-detail-box: flex column, fills modal-box */
+            .product-detail-box {
+                display: flex !important;
+                flex-direction: column !important;
+                grid-template-columns: unset !important;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                overflow: hidden;
+            }
+
+            /* Image side: fixed height, does NOT scroll */
+            .detail-img-side {
+                height: 52vw !important;
+                min-height: 200px;
+                max-height: 300px;
+                flex-shrink: 0 !important;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Slider: swipe horizontal only, prevent vertical scroll */
+            .img-slider-wrap {
+                touch-action: pan-x !important;
+            }
+
+            /* Info side: takes remaining space, scrolls vertically */
+            .detail-info-side {
+                flex: 1 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                overscroll-behavior: contain !important;
+                max-height: none !important;
+                padding: 20px 20px 32px !important;
+                /* Prevent scroll from leaking to body */
+            }
+
+            /* Close button: fixed top-right, always visible */
+            #product-modal .close-modal {
+                position: fixed !important;
+                top: 12px;
+                right: 12px;
+                z-index: 1500;
+                background: rgba(255,255,255,0.95) !important;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.22) !important;
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 18px !important;
+                border-radius: 50% !important;
+            }
         }
     </style>
 </head>
